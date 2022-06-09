@@ -1,9 +1,17 @@
-var operators = {
-  '+': (a, b) => parseFloat(a) + parseFloat(b),
-  x: (a, b) => a * b,
-  '-': (a, b) => a - b,
-  '/': (a, b) => a / b,
-};
+function calculate(a, b, op) {
+  switch (op) {
+    case '+':
+      return parseFloat(a) + parseFloat(b);
+    case 'x':
+      return a * b;
+    case '-':
+      return a - b;
+    case '/':
+      return a / b;
+    default:
+      throw new Error();
+  }
+}
 
 function reducer(state, action) {
   switch (action.type) {
@@ -27,16 +35,33 @@ function reducer(state, action) {
       };
     case 'ADD_OPERATOR':
       if (
-        state.previousOperand !== '' ||
-        state.currentOperand === '' ||
-        state.currentOperand === '.'
+        state.currentOperand === '.' ||
+        (state.currentOperand === '' && state.operator === '')
       ) {
         return state;
+      }
+      if (state.operator !== '' && state.currentOperand === '') {
+        return {
+          ...state,
+          operator: action.operator,
+        };
+      }
+      if (state.previousOperand === '') {
+        return {
+          ...state,
+          currentOperand: '',
+          previousOperand: state.currentOperand,
+          operator: action.operator,
+        };
       }
       return {
         ...state,
         currentOperand: '',
-        previousOperand: state.currentOperand,
+        previousOperand: calculate(
+          state.previousOperand,
+          state.currentOperand,
+          state.operator
+        ),
         operator: action.operator,
       };
     case 'CLEAR':
@@ -45,8 +70,17 @@ function reducer(state, action) {
         currentOperand: '',
         previousOperand: '',
         operator: '',
+        evaluated: false,
       };
     case 'CLEAR_ENTRY':
+      if (state.evaluated)
+        return {
+          ...state,
+          currentOperand: '',
+          previousOperand: '',
+          operator: '',
+          evaluated: false,
+        };
       if (state.currentOperand === '') {
         return state;
       }
@@ -58,9 +92,10 @@ function reducer(state, action) {
       if (state.previousOperand === '' || state.currentOperand === '')
         return state;
       return {
-        currentOperand: operators[state.operator](
+        currentOperand: calculate(
           state.previousOperand,
-          state.currentOperand
+          state.currentOperand,
+          state.operator
         ),
         previousOperand: '',
         operator: '',
