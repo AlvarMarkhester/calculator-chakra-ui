@@ -8,6 +8,13 @@ var operators = {
 function reducer(state, action) {
   switch (action.type) {
     case 'ADD_DIGIT':
+      if (state.evaluated) {
+        return {
+          ...state,
+          currentOperand: action.digit,
+          evaluated: false,
+        };
+      }
       if (state.currentOperand === '0' && action.digit !== '.') {
         return state;
       }
@@ -16,7 +23,7 @@ function reducer(state, action) {
       }
       return {
         ...state,
-        currentOperand: state.currentOperand + action.digit,
+        currentOperand: String(state.currentOperand) + action.digit,
       };
     case 'ADD_OPERATOR':
       if (
@@ -27,12 +34,14 @@ function reducer(state, action) {
         return state;
       }
       return {
+        ...state,
         currentOperand: '',
         previousOperand: state.currentOperand,
         operator: action.operator,
       };
     case 'CLEAR':
       return {
+        ...state,
         currentOperand: '',
         previousOperand: '',
         operator: '',
@@ -55,6 +64,7 @@ function reducer(state, action) {
         ),
         previousOperand: '',
         operator: '',
+        evaluated: true,
       };
     default:
       throw new Error();

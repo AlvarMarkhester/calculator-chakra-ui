@@ -2,7 +2,7 @@ import React, { useReducer } from 'react';
 import CalculatorUI from './CalculatorUI';
 import reducer from './Logic';
 
-const initialState = { currentOperand: '', previousOperand: '', operator: '' };
+const initialState = { currentOperand: '', previousOperand: '', operator: '', evaluated: false };
 
 function App() {
   const [state, dispatch] = useReducer(reducer, initialState);
