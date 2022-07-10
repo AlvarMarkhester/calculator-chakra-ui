@@ -1,4 +1,5 @@
-Simple react calculator made with React, Chakra-UI.
+React calculator made with React, Chakra-UI.
+Implemented using just a simple reducer.
 All code is written by myself, logic included.
 
 Start with "npm start"
